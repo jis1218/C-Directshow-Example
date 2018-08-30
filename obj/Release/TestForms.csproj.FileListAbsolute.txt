@@ -1,0 +1,17 @@
+C:\C#\TestForms\TestForms\bin\Release\TestForms.exe.config
+C:\C#\TestForms\TestForms\bin\Release\TestForms.exe
+C:\C#\TestForms\TestForms\bin\Release\TestForms.pdb
+C:\C#\TestForms\TestForms\bin\Release\AForge.dll
+C:\C#\TestForms\TestForms\bin\Release\AForge.Video.DirectShow.dll
+C:\C#\TestForms\TestForms\bin\Release\AForge.Video.dll
+C:\C#\TestForms\TestForms\bin\Release\DirectShowLib-2005.dll
+C:\C#\TestForms\TestForms\bin\Release\AForge.xml
+C:\C#\TestForms\TestForms\bin\Release\AForge.Video.xml
+C:\C#\TestForms\TestForms\bin\Release\AForge.Video.DirectShow.xml
+C:\C#\TestForms\TestForms\obj\Release\TestForms.Form1.resources
+C:\C#\TestForms\TestForms\obj\Release\TestForms.Properties.Resources.resources
+C:\C#\TestForms\TestForms\obj\Release\TestForms.csproj.GenerateResource.cache
+C:\C#\TestForms\TestForms\obj\Release\TestForms.csproj.CoreCompileInputs.cache
+C:\C#\TestForms\TestForms\obj\Release\TestForms.csproj.CopyComplete
+C:\C#\TestForms\TestForms\obj\Release\TestForms.exe
+C:\C#\TestForms\TestForms\obj\Release\TestForms.pdb
