@@ -16,128 +16,18 @@ namespace TestForms
 {
     public partial class Form1 : Form
     {
+        int BUFF_SIZE = 1024;
+        string server = "192.168.1.22";
+        int port = 7000;
+        TcpClient tc = null;
+
         public Form1()
         {
             InitializeComponent();
-
-            m_fnReceiveHandler = new AsyncCallback(handleDataReceive);
-            m_fnSendHandler = new AsyncCallback(handleDataSend);
+            //tc = new TcpClient(server, port);
         }
 
-        public class AsyncObject
-        {
-            public Byte[] Buffer;
-            public Socket WorkingSocket;
-            public AsyncObject(Int32 bufferSize)
-            {
-                this.Buffer = new byte[bufferSize];
-            }
-
-
-        }
-
-
-
-        private Socket m_ClientSocket = null;
-        private Boolean g_Connected;
-        private AsyncCallback m_fnReceiveHandler;
-        private AsyncCallback m_fnSendHandler;
-
-
-        private void handleDataReceive(IAsyncResult ar)
-        {
-
-        }
-
-        private void handleDataSend(IAsyncResult ar)
-        {
-
-        }
-
-        public Boolean Connected
-        {
-            get
-            {
-                return g_Connected;
-            }
-        }
-
-        public void ConnectToServer(String hostName, UInt16 hostPort)
-        {
-            m_ClientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
-            Boolean isConnected = false;
-            try
-            {
-                m_ClientSocket.Connect(hostName, hostPort);
-
-                isConnected = true;
-            }
-            catch
-            {
-                isConnected = false;
-            }
-            g_Connected = isConnected;
-
-            if (isConnected)
-            {
-                AsyncObject ao = new AsyncObject(4096);
-
-                ao.WorkingSocket = m_ClientSocket;
-
-                m_ClientSocket.BeginReceive(ao.Buffer, 0, ao.Buffer.Length, SocketFlags.None, m_fnReceiveHandler, ao);
-
-                Console.WriteLine("연결 성공!");
-            }
-            else
-            {
-                Console.WriteLine("연결 실패!");
-            }
-        }
-
-        public void StopClient()
-        {
-            m_ClientSocket.Close();
-        }
-
-        public void SendMessage(String message)
-        {
-            AsyncObject ao = new AsyncObject(1);
-
-            ao.Buffer = Encoding.Unicode.GetBytes(message);
-
-            ao.WorkingSocket = m_ClientSocket;
-
-            try
-            {
-                m_ClientSocket.BeginSend(ao.Buffer, 0, ao.Buffer.Length, SocketFlags.None, m_fnSendHandler, ao);
-            }catch(Exception ex)
-            {
-                Console.WriteLine("전송 중 오류발생");
-            }
-        }
-
-        private void handleDataReceive(IAsyncResult ar)
-        {
-            AsyncObject ao = (AsyncObject)ar.AsyncState;
-
-            Int32 recvBytes;
-
-            try
-            {
-                recvBytes = ao.WorkingSocket.EndReceive(ar);
-            }
-            catch
-            {
-                return;
-            }
-
-            if(recvBytes>0)
-        }
-        
-
-
-        FilterInfoCollection _videoDevices;
-        
+        FilterInfoCollection _videoDevices;        
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -149,19 +39,34 @@ namespace TestForms
                 MessageBox.Show("No video input device");
                 return;
             }
+
+            
+
+            _videoSource = new VideoCaptureDevice(_videoDevices[0].MonikerString);
+            _videoSource.SetCameraProperty(CameraControlProperty.Zoom, 100, CameraControlFlags.Auto);
+            _videoSource.SetCameraProperty(CameraControlProperty.Exposure, -7, CameraControlFlags.Auto);
+            _videoSource.SetCameraProperty(CameraControlProperty.Focus, 0, CameraControlFlags.Manual);
+            videoCapabilities = _videoSource.VideoCapabilities;
+
+
+            foreach (VideoCapabilities cap in videoCapabilities)
+            {
+                comboBox1.Items.Add(string.Format("{0} x {1}", cap.FrameSize.Width, cap.FrameSize.Height));
+            }
+
+
+            
+            //_videoSource.VideoResolution = videoCapabilities[1];
         }
-
-
-
 
         private void video_NewFrame(object sender, NewFrameEventArgs eventArgs)
         {
             Bitmap bitmap = eventArgs.Frame;
 
-            this.Invoke((Action)(() =>
-            {
-                pictureBox1.Image = (Bitmap) bitmap.Clone();
-            }), null);
+                this.Invoke((Action)(() =>
+                {
+                    pictureBox1.Image = (Bitmap) bitmap.Clone();
+                }), null);
         }
 
         VideoCaptureDevice _videoSource;
@@ -173,20 +78,19 @@ namespace TestForms
             {
                 //MessageBox.Show(_videoDevices[0].ToString());
                 //Console.WriteLine(_videoDevices[0].ToString());
-                _videoSource = new VideoCaptureDevice(_videoDevices[0].MonikerString);
+                _videoSource.VideoResolution = videoCapabilities[comboBox1.SelectedIndex];
                 _videoSource.NewFrame += new NewFrameEventHandler(video_NewFrame);
-                videoCapabilities = _videoSource.VideoCapabilities;
-
-                //int i = 1;
-
-                //foreach(VideoCapabilities cap in videoCapabilities)
-                //{
-                //   MessageBox.Show(i + "번째  " + cap.FrameSize.Width + ", " + cap.FrameSize.Height);
-                //    i++;
-                //}
                 
-
-                _videoSource.VideoResolution = videoCapabilities[19];
+                
+                _videoSource.GetCameraProperty(CameraControlProperty.Zoom, out int zoom, out CameraControlFlags controlFlags);
+                _videoSource.GetCameraProperty(CameraControlProperty.Exposure, out int exposure , out CameraControlFlags controlFlags2);
+                _videoSource.GetCameraProperty(CameraControlProperty.Focus, out int focus, out CameraControlFlags controlFlags3);
+                _videoSource.GetCameraProperty(CameraControlProperty.Iris, out int iris , out CameraControlFlags controlFlags4);
+                _videoSource.GetCameraProperty(CameraControlProperty.Roll, out int roll, out CameraControlFlags controlFlags5);
+                
+                MessageBox.Show("1. Zoom : " + zoom + "\n2. Exposure : " + exposure + "\n3. Focus : " + focus + "\n4. Iris : " + iris + "\n5. Roll" + roll);
+                MessageBox.Show("control flags is" + controlFlags.ToString() + "\n2. Exposure : " + controlFlags2.ToString() + 
+                    "\n3. Focus : " + controlFlags3.ToString() + "\n4. Iris : " + controlFlags4.ToString() + "\n5. Roll" + controlFlags5.ToString());
               
                 _videoSource.Start();
 
@@ -197,6 +101,37 @@ namespace TestForms
                 _videoSource.SignalToStop();
                 button1.Text = "Start";
             }
+        }
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+            System.Windows.Forms.TrackBar myTb;
+            myTb = (System.Windows.Forms.TrackBar)sender;
+
+            _videoSource.SetCameraProperty(CameraControlProperty.Zoom, myTb.Value, CameraControlFlags.Manual);
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void trackBar2_Scroll(object sender, EventArgs e)
+        {
+            System.Windows.Forms.TrackBar myTb;
+            myTb = (System.Windows.Forms.TrackBar)sender;
+
+            _videoSource.SetCameraProperty(CameraControlProperty.Exposure, myTb.Value, CameraControlFlags.Manual);
+        }
+
+
+
+        private void trackBar4_Scroll(object sender, EventArgs e)
+        {
+            System.Windows.Forms.TrackBar myTb;
+            myTb = (System.Windows.Forms.TrackBar)sender;
+
+            _videoSource.SetCameraProperty(CameraControlProperty.Focus, myTb.Value, CameraControlFlags.Manual);
         }
     }
 }
