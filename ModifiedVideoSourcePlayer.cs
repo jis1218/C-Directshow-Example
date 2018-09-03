@@ -14,6 +14,7 @@ using System.Drawing.Imaging;
 using System.Windows.Forms;
 using AForge.Video;
 
+
 namespace TestForms
 {
     using Point = System.Drawing.Point;

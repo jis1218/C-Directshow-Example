@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.button1 = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -38,7 +37,7 @@
             this.trackBar2 = new System.Windows.Forms.TrackBar();
             this.trackBar4 = new System.Windows.Forms.TrackBar();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.modifiedVideoSourcePlayer1 = new TestForms.ModifiedVideoSourcePlayer();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar4)).BeginInit();
@@ -53,14 +52,6 @@
             this.button1.Text = "Start";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Location = new System.Drawing.Point(37, 49);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(1304, 963);
-            this.pictureBox1.TabIndex = 1;
-            this.pictureBox1.TabStop = false;
             // 
             // trackBar1
             // 
@@ -142,11 +133,22 @@
             this.comboBox1.Size = new System.Drawing.Size(340, 20);
             this.comboBox1.TabIndex = 10;
             // 
+            // modifiedVideoSourcePlayer1
+            // 
+            //this.modifiedVideoSourcePlayer1.AutoSizeControl = true;
+            this.modifiedVideoSourcePlayer1.Location = new System.Drawing.Point(122, 66);
+            this.modifiedVideoSourcePlayer1.Name = "modifiedVideoSourcePlayer1";
+            this.modifiedVideoSourcePlayer1.Size = new System.Drawing.Size(1154, 505);
+            this.modifiedVideoSourcePlayer1.TabIndex = 11;
+            this.modifiedVideoSourcePlayer1.Text = "modifiedVideoSourcePlayer1";
+            this.modifiedVideoSourcePlayer1.VideoSource = null;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1904, 1041);
+            this.Controls.Add(this.modifiedVideoSourcePlayer1);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.trackBar4);
             this.Controls.Add(this.trackBar2);
@@ -155,12 +157,10 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.trackBar1);
-            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.button1);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar4)).EndInit();
@@ -172,7 +172,6 @@
         #endregion
 
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.TrackBar trackBar1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
@@ -181,6 +180,7 @@
         private System.Windows.Forms.TrackBar trackBar2;
         private System.Windows.Forms.TrackBar trackBar4;
         private System.Windows.Forms.ComboBox comboBox1;
+        private ModifiedVideoSourcePlayer modifiedVideoSourcePlayer1;
     }
 }
 

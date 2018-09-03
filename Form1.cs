@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Net;
-using System.Net.Sockets;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,18 +14,16 @@ namespace TestForms
 {
     public partial class Form1 : Form
     {
-        int BUFF_SIZE = 1024;
-        string server = "192.168.1.22";
-        int port = 7000;
-        TcpClient tc = null;
 
         public Form1()
         {
             InitializeComponent();
-            //tc = new TcpClient(server, port);
+
         }
 
-        FilterInfoCollection _videoDevices;        
+
+        FilterInfoCollection _videoDevices;
+
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -39,8 +35,6 @@ namespace TestForms
                 MessageBox.Show("No video input device");
                 return;
             }
-
-            
 
             _videoSource = new VideoCaptureDevice(_videoDevices[0].MonikerString);
             _videoSource.SetCameraProperty(CameraControlProperty.Zoom, 100, CameraControlFlags.Auto);
@@ -59,14 +53,17 @@ namespace TestForms
             //_videoSource.VideoResolution = videoCapabilities[1];
         }
 
+
         private void video_NewFrame(object sender, NewFrameEventArgs eventArgs)
         {
             Bitmap bitmap = eventArgs.Frame;
 
+
                 this.Invoke((Action)(() =>
                 {
-                    pictureBox1.Image = (Bitmap) bitmap.Clone();
+                    //pictureBox1.Image = (Bitmap) bitmap.Clone();
                 }), null);
+
         }
 
         VideoCaptureDevice _videoSource;
@@ -87,12 +84,10 @@ namespace TestForms
                 _videoSource.GetCameraProperty(CameraControlProperty.Focus, out int focus, out CameraControlFlags controlFlags3);
                 _videoSource.GetCameraProperty(CameraControlProperty.Iris, out int iris , out CameraControlFlags controlFlags4);
                 _videoSource.GetCameraProperty(CameraControlProperty.Roll, out int roll, out CameraControlFlags controlFlags5);
-                
-                MessageBox.Show("1. Zoom : " + zoom + "\n2. Exposure : " + exposure + "\n3. Focus : " + focus + "\n4. Iris : " + iris + "\n5. Roll" + roll);
-                MessageBox.Show("control flags is" + controlFlags.ToString() + "\n2. Exposure : " + controlFlags2.ToString() + 
-                    "\n3. Focus : " + controlFlags3.ToString() + "\n4. Iris : " + controlFlags4.ToString() + "\n5. Roll" + controlFlags5.ToString());
-              
-                _videoSource.Start();
+
+                //_videoSource.Start();
+                modifiedVideoSourcePlayer1.VideoSource = _videoSource;
+                modifiedVideoSourcePlayer1.Start();
 
                 button1.Text = "Stop";
             }
