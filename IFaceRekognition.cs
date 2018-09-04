@@ -11,7 +11,7 @@ namespace TestForms
     {
         void initialize();
         void release();
-        void requestRekognition(Bitmap bitmap);
+        void requestRekognition(Bitmap bitmap, MyDelegate del);
         void getRekognitionResult();
         void setOnResultListener();
 

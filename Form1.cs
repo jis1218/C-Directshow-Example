@@ -9,9 +9,12 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using AForge.Video;
 using AForge.Video.DirectShow;
+using System.Threading;
 
 namespace TestForms
 {
+    delegate void MyDelegate(string s);
+
     public partial class Form1 : Form
     {
 
@@ -23,11 +26,21 @@ namespace TestForms
 
 
         FilterInfoCollection _videoDevices;
-
+        AWSImageRekognition imageRekognition;
+        MyDelegate del;
 
         private void Form1_Load(object sender, EventArgs e)
         {
             _videoDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
+            imageRekognition = new AWSImageRekognition();
+            imageRekognition.initialize();
+            del = delegate (string s)
+            {                
+                this.Invoke((Action)(() =>
+                {
+                    label5.Text = s;
+                }), null);
+            };
 
             if(_videoDevices.Count == 0)
             {
@@ -46,11 +59,11 @@ namespace TestForms
             foreach (VideoCapabilities cap in videoCapabilities)
             {
                 comboBox1.Items.Add(string.Format("{0} x {1}", cap.FrameSize.Width, cap.FrameSize.Height));
+                
             }
 
-
-            
-            //_videoSource.VideoResolution = videoCapabilities[1];
+            comboBox1.SelectedIndex = 0;
+        
         }
 
 
@@ -58,12 +71,22 @@ namespace TestForms
         {
             Bitmap bitmap = eventArgs.Frame;
 
+                //this.Invoke((Action)(() =>
+                //{
+                //    if (pictureBox1.Image != null)
+                //        pictureBox1.Image.Dispose();
 
-                this.Invoke((Action)(() =>
-                {
-                    //pictureBox1.Image = (Bitmap) bitmap.Clone();
-                }), null);
+                //    pictureBox1.Image = (Bitmap) bitmap.Clone();
+                //}), null);
 
+            Thread t1 = new Thread(new ThreadStart(Run));
+            t1.Start(bitmap);
+        }
+
+
+        public void changeLabel(String s)
+        {
+            label1.Text = s;
         }
 
         VideoCaptureDevice _videoSource;
@@ -76,7 +99,8 @@ namespace TestForms
                 //MessageBox.Show(_videoDevices[0].ToString());
                 //Console.WriteLine(_videoDevices[0].ToString());
                 _videoSource.VideoResolution = videoCapabilities[comboBox1.SelectedIndex];
-                _videoSource.NewFrame += new NewFrameEventHandler(video_NewFrame);
+                //_videoSource.NewFrame += new NewFrameEventHandler(video_NewFrame);
+                
                 
                 
                 _videoSource.GetCameraProperty(CameraControlProperty.Zoom, out int zoom, out CameraControlFlags controlFlags);
@@ -88,14 +112,47 @@ namespace TestForms
                 //_videoSource.Start();
                 modifiedVideoSourcePlayer1.VideoSource = _videoSource;
                 modifiedVideoSourcePlayer1.Start();
+                sendImageToAWS();
 
                 button1.Text = "Stop";
             }
             else
             {
                 _videoSource.SignalToStop();
+                sendImageToAWS();
                 button1.Text = "Start";
             }
+        }
+
+        private void sendImageToAWS()
+        {
+
+            Task.Factory.StartNew(new Action(Run));
+            
+
+            //Thread t1 = null;
+            //if (t1 == null)
+            //{
+            //    t1 = new Thread(new ThreadStart(Run));
+            //    t1.Start();
+            //}
+            //else
+            //{
+            //    t1.Abort();
+            //}
+            
+            
+        }
+
+        private void Run()
+        {
+            while (true)
+            {
+                Bitmap bitmap = modifiedVideoSourcePlayer1.GetCurrentVideoFrame();
+                imageRekognition.requestRekognition((Bitmap)bitmap, del);
+                Thread.Sleep(1000);
+            }
+            
         }
 
         private void trackBar1_Scroll(object sender, EventArgs e)

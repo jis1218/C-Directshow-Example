@@ -108,7 +108,7 @@ namespace TestForms
         /// Gets or sets whether the player should keep the aspect ratio of the images being shown.
         /// </summary>
         /// 
-        [DefaultValue( false )]
+        [DefaultValue( true )]
         public bool KeepAspectRatio
         {
             get { return keepRatio; }
@@ -417,7 +417,7 @@ namespace TestForms
                 Rectangle rect = this.ClientRectangle;
                 Pen       borderPen = new Pen( borderColor, 1 );
 
-                // draw rectangle - 최초로 사각형을 그려줄 때
+                // draw rectangle - 최초로 사각형을 그려줄 때 
                 g.DrawRectangle( borderPen, rect.X, rect.Y, rect.Width - 1, rect.Height - 1 );
                 //g.DrawRectangle(borderPen, 100, 100, 100, 100);
 
@@ -444,13 +444,14 @@ namespace TestForms
                             newRect.X = ( rect.Width - newRect.Width ) / 2;
                             newRect.Y = ( rect.Height - newRect.Height ) / 2;
 
-                            g.DrawImage( frame, newRect.X + 1, newRect.Y + 1, newRect.Width - 2, newRect.Height - 2);
-                            //g.DrawImage(frame, 100, 100, 400, 400);
+                            //g.DrawImage( frame, newRect.X + 1, newRect.Y + 1, newRect.Width - 2, newRect.Height - 2);
+                            g.DrawImage(frame, 0, 0, 1400, 800);
                         }
                         else
                         {
                             // draw current frame
-                            g.DrawImage( frame, rect.X + 1, rect.Y + 1, rect.Width - 2, rect.Height - 2);
+                            //g.DrawImage( frame, rect.X + 1, rect.Y + 1, rect.Width - 2, rect.Height - 2);
+                            g.DrawImage(frame, 0, 0, 1400, 800);
                         }
 
                         firstFrameNotProcessed = false;
@@ -502,35 +503,39 @@ namespace TestForms
                 }
 
                 // now update current frame of the control
-                lock ( sync )
+                lock (sync)
                 {
                     // dispose previous frame
-                    if ( currentFrame != null )
+                    if (currentFrame != null)
                     {
-                        if ( currentFrame.Size != eventArgs.Frame.Size )
+                        if (currentFrame.Size != eventArgs.Frame.Size)
                         {
                             needSizeUpdate = true;
                         }
 
-                        currentFrame.Dispose( );
+                        currentFrame.Dispose();
                         currentFrame = null;
                     }
-                    if ( convertedFrame != null )
+                    if (convertedFrame != null)
                     {
-                        convertedFrame.Dispose( );
+                        convertedFrame.Dispose();
                         convertedFrame = null;
                     }
 
                     currentFrame = newFrame;
-                    frameSize    = currentFrame.Size;
-                    lastMessage  = null;
+                    frameSize = currentFrame.Size;
+                    lastMessage = null;
 
                     // check if conversion is required to lower bpp rate
-                    if ( ( currentFrame.PixelFormat == PixelFormat.Format16bppGrayScale ) ||
-                         ( currentFrame.PixelFormat == PixelFormat.Format48bppRgb ) ||
-                         ( currentFrame.PixelFormat == PixelFormat.Format64bppArgb ) )
+                    if ((currentFrame.PixelFormat == PixelFormat.Format16bppGrayScale) ||
+                         (currentFrame.PixelFormat == PixelFormat.Format48bppRgb) ||
+                         (currentFrame.PixelFormat == PixelFormat.Format64bppArgb)
+                         //|| ( currentFrame.PixelFormat == PixelFormat.Format24bppRgb)
+                         )
                     {
+                        //MessageBox.Show("Hello");
                         convertedFrame = AForge.Imaging.Image.Convert16bppTo8bpp( currentFrame );
+                        //convertedFrame = Tools.
                     }
                 }
 

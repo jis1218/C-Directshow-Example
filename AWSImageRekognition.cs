@@ -6,45 +6,60 @@ using System.Text;
 using System.Threading.Tasks;
 using Amazon.Rekognition;
 using Amazon.Rekognition.Model;
+using OpenCvSharp;
 
 namespace TestForms
 {
+    
+    
+
     class AWSImageRekognition : IFaceRekognition
     {
         AmazonRekognitionClient rekognitionClient;
         String collectionId = "MyCollection";
 
+
         public void initialize()
         {
             rekognitionClient = new AmazonRekognitionClient();
-            throw new NotImplementedException();
+            
+            
         }
 
         public void release()
         {
-            throw new NotImplementedException();
+            
         }
 
-        public void requestRekognition(Bitmap bitmap)
+        public void requestRekognition(Bitmap bitmap, MyDelegate my)
         {
-            searchFacesMatch(bitmap);
-            throw new NotImplementedException();
+            //List<Mat> matList = detectFace(bitmap);
+
+            //if (matList != null)
+            //{
+            //    foreach (Mat matFace in matList)
+            //    {
+            //        searchFacesMatch(matFace, my);
+            //    }
+            //}
+
+            searchFacesMatch(bitmap, my);
+            
+            
         }
 
         public void getRekognitionResult()
         {
-            throw new NotImplementedException();
+           
         }
 
         public void setOnResultListener()
         {
-            throw new NotImplementedException();
+            
         }
 
-        private void searchFacesMatch(Bitmap bitmap)
+        private void searchFacesMatch(Bitmap bitmap, MyDelegate my)
         {
-            String collectionId = "MyCollection";
-
             Amazon.Rekognition.Model.Image image = Utils.bitmapToAWSImage(bitmap);
 
             SearchFacesByImageRequest request = new SearchFacesByImageRequest()
@@ -60,18 +75,39 @@ namespace TestForms
             }
             catch (Exception e)
             {
-                Console.WriteLine("cannot recognize human face");
+                my(e.Message);
+                //Console.WriteLine("cannot recognize human face");
                 return;
             }
 
-            foreach (FaceMatch face in response.FaceMatches)
+
+
+            if (response.FaceMatches.Count != 0)
             {
-                Console.WriteLine("FaceId: " + face.Face.FaceId + ", Similarity: " + face.Similarity);
+                String name = response.FaceMatches[0].Face.FaceId;
+                String similarity = response.FaceMatches[0].Similarity+"";
+                my(similarity);
             }
+            else
+            {
+                my("nobody nobody but you");
+            }
+
+
         }
 
-        private void detectFace(Amazon.Rekognition.Model.Image image)
+        private List<Mat> detectFace(Bitmap bitmap)
         {
+            Mat src = null;
+            try
+            {
+                src = OpenCvSharp.Extensions.BitmapConverter.ToMat(bitmap);
+            }catch(Exception e)
+            {
+
+            }
+            Amazon.Rekognition.Model.Image image = Utils.bitmapToAWSImage(bitmap);
+
             DetectFacesRequest request = new DetectFacesRequest()
             {
                 Image = image
@@ -81,16 +117,37 @@ namespace TestForms
             {
                 DetectFacesResponse detectFacesResponse = rekognitionClient.DetectFaces(request);
 
+                float bitmapWidth = (float) bitmap.Width;
+                float bitmapHeight = (float) bitmap.Height;
+
+                List<Mat> matList = new List<Mat>();
+
                 foreach (FaceDetail face in detectFacesResponse.FaceDetails)
                 {
-                    Console.WriteLine("Confidence : {0}\nAge :" + face.Confidence + ", " + face.BoundingBox.Top + ", " + face.BoundingBox.Left + ", " +
-                        face.BoundingBox.Height + ", " + face.BoundingBox.Width);
+                    int faceLeft = (int)(face.BoundingBox.Left * bitmapWidth);
+                    int faceTop = (int) (face.BoundingBox.Top * bitmapHeight);
+                    int faceWidth = (int) (face.BoundingBox.Width * bitmapWidth);
+                    int faceHeight = (int) (face.BoundingBox.Height * bitmapHeight);
+
+                    Rect rectCrop = new Rect(faceLeft, faceTop, faceWidth, faceHeight);
+                    //Console.WriteLine("Confidence : {0}\nAge :" + face.Confidence + ", " + face.BoundingBox.Top + ", " + face.BoundingBox.Left + ", " +
+                    //    face.BoundingBox.Height + ", " + face.BoundingBox.Width);
+
+                    Mat img = new Mat(src, rectCrop);
+                    matList.Add(img);
                 }
+
+                return matList;
+
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
+
+            return null;
         }
+
+      
     }
 }

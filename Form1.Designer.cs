@@ -37,6 +37,7 @@
             this.trackBar2 = new System.Windows.Forms.TrackBar();
             this.trackBar4 = new System.Windows.Forms.TrackBar();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.modifiedVideoSourcePlayer1 = new TestForms.ModifiedVideoSourcePlayer();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
@@ -133,13 +134,22 @@
             this.comboBox1.Size = new System.Drawing.Size(340, 20);
             this.comboBox1.TabIndex = 10;
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(1345, 521);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(38, 12);
+            this.label5.TabIndex = 12;
+            this.label5.Text = "label5";
+            // 
             // modifiedVideoSourcePlayer1
             // 
-            //this.modifiedVideoSourcePlayer1.AutoSizeControl = true;
-            this.modifiedVideoSourcePlayer1.Location = new System.Drawing.Point(122, 66);
+            this.modifiedVideoSourcePlayer1.KeepAspectRatio = false;
+            this.modifiedVideoSourcePlayer1.Location = new System.Drawing.Point(12, 38);
             this.modifiedVideoSourcePlayer1.Name = "modifiedVideoSourcePlayer1";
-            this.modifiedVideoSourcePlayer1.Size = new System.Drawing.Size(1154, 505);
-            this.modifiedVideoSourcePlayer1.TabIndex = 11;
+            this.modifiedVideoSourcePlayer1.Size = new System.Drawing.Size(1305, 803);
+            this.modifiedVideoSourcePlayer1.TabIndex = 13;
             this.modifiedVideoSourcePlayer1.Text = "modifiedVideoSourcePlayer1";
             this.modifiedVideoSourcePlayer1.VideoSource = null;
             // 
@@ -149,6 +159,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1904, 1041);
             this.Controls.Add(this.modifiedVideoSourcePlayer1);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.trackBar4);
             this.Controls.Add(this.trackBar2);
@@ -180,6 +191,7 @@
         private System.Windows.Forms.TrackBar trackBar2;
         private System.Windows.Forms.TrackBar trackBar4;
         private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label label5;
         private ModifiedVideoSourcePlayer modifiedVideoSourcePlayer1;
     }
 }
